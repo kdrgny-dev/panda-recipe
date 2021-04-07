@@ -47,7 +47,10 @@ export async function getStaticPaths() {
 export default function RecipeDetails({post}) {
     return (
         <div>
-            <h1 className="text-4xl border-b-2 border-purple-600 text-center w-full pb-2 mb-5 border-purple-700">{post.fields.title}</h1>
+            <h1 className="flex justify-between items-center text-4xl border-b-2 border-purple-600 text-center w-full pb-2 mb-5 border-purple-700">
+                {post.fields.title}
+                <span className="text-base">Cooking Time : <strong>{post.fields.cookingTime}</strong> min.</span>
+            </h1>
             <div className="flex flex-wrap overflow-hidden space-x-4">
 
                 <div className="overflow-hidden flex-1">
