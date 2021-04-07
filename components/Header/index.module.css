@@ -1,0 +1,18 @@
+.header {
+    @apply
+    bg-purple-500
+    py-10
+    text-center
+}
+
+.header_link {
+    @apply
+    text-5xl
+    text-yellow-300
+    leading-normal
+}
+
+.header_link h2 {
+    @apply
+    text-xl
+}
