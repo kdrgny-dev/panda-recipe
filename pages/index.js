@@ -1,6 +1,5 @@
 import { createClient } from 'contentful'
 import RecipeCard from '../components/RecipeCard'
-import styles from '../styles/home.module.css'
 
 export async function getStaticProps() {
     const client = createClient({
@@ -21,7 +20,7 @@ export default function Home({ recipes }) {
     console.log(recipes)
     return (
         <div className="space-y-2">
-            <div className={styles.recipes_wrapper}>
+            <div className="grid grid-cols-3 gap-4">
                 {
                     recipes.map(recipe => (
 
