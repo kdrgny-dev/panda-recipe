@@ -18,7 +18,6 @@ export async function getStaticProps() {
 }
 
 export default function Home({ recipes }) {
-    console.log(recipes)
     return (
         <div className="space-y-2">
             <div className="grid grid-cols-3 gap-4">

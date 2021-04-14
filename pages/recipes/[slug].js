@@ -65,7 +65,7 @@ export default function RecipeDetails({ recipe }) {
                     <ul className="list-inside list-decimal py-5">
                         {
                             ingredients.map(item => (
-                                <li>{item}</li>
+                                <li key={item}>{item}</li>
                             ))
                         }
                     </ul>
