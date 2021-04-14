@@ -7,7 +7,7 @@ export default function RecipeCard({ recipe }) {
     const {title, slug, thumbnail} = recipe.fields
     return (
         <div className="wrapper antialiased text-gray-900">
-            <Link href={`/recipes/${slug}`} as={`/recipes/${slug}`}>
+            <Link href={`/recipes/${slug}`}>
                 <a>
                     <div>
 
