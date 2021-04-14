@@ -1,19 +1,22 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 
 export default function RecipeCard({ recipe }) {
-    const {title, slug, cookingTime, img} = recipe.fields
+    const {title, slug, thumbnail} = recipe.fields
     return (
         <div className="wrapper antialiased text-gray-900">
             <Link href={`/recipes/${slug}`} as={`/recipes/${slug}`}>
                 <a>
                     <div>
 
-                        <img
-                            src={recipe.fields.thumbnail.fields.file.url}
+                        <Image
+                            src={'https:' + thumbnail.fields.file.url}
                             alt={title}
                             className="rounded-lg filter grayscale hover:filter-none transition duration-500 ease-in-out"
+                            width={thumbnail.fields.file.details.image.width}
+                            height={thumbnail.fields.file.details.image.height}
                         />
 
                         <div className="relative mt-2">

@@ -1,77 +1,78 @@
 import React from 'react'
 import { createClient } from 'contentful'
+import Image from 'next/image'
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 
-export async function getStaticProps(context) {
-    const client = createClient({
-        space: process.env.CONTENTFUL_SPACE_ID,
-        accessToken: process.env.CONTENTFUL_ACCESS_KEY,
+const client = createClient({
+    space: process.env.CONTENTFUL_SPACE_ID,
+    accessToken: process.env.CONTENTFUL_ACCESS_KEY,
+})
+
+export const getStaticPaths = async () => {
+    const res = await client.getEntries({
+        content_type : 'recipe'
     })
-
-    const res = await client.getEntries({ content_type: 'recipe', "fields.slug": context.params.slug })
-        .then((response) => response.items)
-
-    // Since `slug` was set to be a unique field, we can be confident that
-    // the only result in the query is the correct post.
-    const post = res.pop()
-
-    // If nothing was found, return an empty object for props, or else there would
-    // be an error when Next tries to serialize an `undefined` value to JSON.
-    if (!post) {
-        return { props: {} }
-    }
-
-    return {
-        props: {
-            post,
+    
+    const paths = res.items.map(item => {
+        return {
+            params: {
+                slug:item.fields.slug
+            }
         }
-    }
-}
-
-export async function getStaticPaths() {
-    const client = createClient({
-        space: process.env.CONTENTFUL_SPACE_ID,
-        accessToken: process.env.CONTENTFUL_ACCESS_KEY,
     })
-
-    const posts = await client.getEntries({ content_type: 'recipe' })
-        .then((response) => response.items)
-
-    const paths = posts.map(({ fields: { slug } }) => ({ params: { slug } }))
 
     return {
         paths,
-        fallback: false,
+        fallback:true
     }
 }
 
-export default function RecipeDetails({post}) {
+export async function getStaticProps({params}) {
+    const {items} = await client.getEntries({
+        content_type: 'recipe',
+        'fields.slug' : params.slug
+    })
+
+    return {
+        props: { recipe: items[0] },
+        revalidate: 1
+    }
+}
+
+export default function RecipeDetails({ recipe }) {
+    
+    const { featuredImage, title, cookingTime, ingredients, method } = recipe.fields
+    
     return (
         <div>
             <h1 className="flex justify-between items-center text-4xl border-b-2 border-purple-600 text-center w-full pb-2 mb-5 border-purple-700">
-                {post.fields.title}
-                <span className="text-base">Cooking Time : <strong>{post.fields.cookingTime}</strong> min.</span>
+                {title}
+                <span className="text-base">Cooking Time : <strong>{cookingTime}</strong> min.</span>
             </h1>
             <div className="flex flex-wrap overflow-hidden space-x-4">
 
                 <div className="overflow-hidden flex-1">
-                    <img src={post.fields.featuredImage.fields.file.url} alt="" />
+                    <Image
+                        src={'https:' + featuredImage.fields.file.url}
+                        alt={title}
+                        width={featuredImage.fields.file.details.image.width}
+                        height={featuredImage.fields.file.details.image.height}
+                    />
                 </div>
 
                 <div className="w-6/12 flex flex-wrap flex-col">
                     <h1 className="text-4xl border-b-2 text-center w-full pb-2 border-purple-500">Ingredients</h1>
                     <ul className="list-inside list-decimal py-5">
                         {
-                            post.fields.ingredients.map(item => (
+                            ingredients.map(item => (
                                 <li>{item}</li>
                             ))
                         }
                     </ul>
                     <h1 className="text-4xl border-b-2 text-center w-full pb-2 border-purple-300">Method</h1>
-                    {
-                        post.fields.method.content.map(content => (
-                            <p className="py-2">{content.content[0].value}</p>
-                        ))
-                    }
+                    <div>
+                        {documentToReactComponents(method)}
+                    </div>
 
                     <div className="text-center">
                         <h2 className="text-6xl font-bold text-purple-800">Ready to eat!</h2>
